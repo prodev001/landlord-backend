@@ -1,0 +1,63 @@
+{
+  "name": "landlordportal-app",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "engines": {
+    "node": "v16.13.1"
+  },
+  "scripts": {
+    "clean": "rm -rf build && mkdir build",
+    "start": "node --experimental-specifier-resolution=node index.js",
+    "build": "sh scripts/build.sh",
+    "dev": "nodemon --experimental-specifier-resolution=node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.757.0",
+    "axios": "^0.21.1",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-jwt": "^6.0.0",
+    "form-data": "^4.0.0",
+    "fs": "^0.0.1-security",
+    "helmet": "^4.1.1",
+    "jsforce": "^1.10.1",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.20",
+    "log4js": "^6.4.4",
+    "md5": "^2.3.0",
+    "moment": "^2.29.1",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.2",
+    "multer-s3": "^2.9.0",
+    "mysql2": "^2.3.3",
+    "node-cron": "^3.0.0",
+    "node-schedule": "^2.1.0",
+    "nodemailer": "^6.6.1",
+    "nodemon": "^2.0.4",
+    "pg": "^8.3.3",
+    "pg-hstore": "^2.3.3",
+    "regex": "^0.1.1",
+    "regex-test": "^0.1.1",
+    "sequelize": "^5.22.3",
+    "sqs-consumer": "^5.4.0",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-loader": "^8.1.0",
+    "babel-plugin-styled-components": "^1.11.1",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-3": "^6.24.1",
+    "babel-runtime": "^6.26.0",
+    "eslint": "^7.9.0",
+    "sequelize-cli": "^6.4.1"
+  }
+}
