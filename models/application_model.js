@@ -2,9 +2,9 @@ import { default as common_constants } from '../constants/common_constants';
 
 export default (sequelize, DataTypes) => {
   return sequelize.define(
-    'building',
+    'application',
     {
-      building_id: {
+      app_id: {
         type: DataTypes.STRING,
         allowNull: false,
       },
@@ -12,121 +12,141 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      building_type: {
+      stage: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      phone: {
+      insurer: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      billingStreet: {
+      total_number_of_tenants: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      email_address: {
+      active_lease: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      student_housing: {
+      months_remaining: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      landlord_id: {
+      app_type: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      landlord_name: {
+      rider_id: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      primary_contact: {
+      gross_monthly_rent: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      property_owner: {
+      gross_annual_rent: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      total_of_units: {
+      lease_start_date: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      total_of_active_leap_units: {
+      lease_end_date: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      leap_of_total_inventory: {
+      decline_reason_1: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      estimated_applicant_decline_rate: {
+      cancellation_reason: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      building_approval_rate: {
+      lanlord_account_name: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      total_of_issued_policies: {
+      apartment_building_id: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      total_of_applications: {
+      apartment_building_name: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      total_of_cancelled_applications: {
+      issue_date: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      total_of_declined_applications: {
+      coverageamountrequested1: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      last_application_date: {
+      coverage_amount_requested_months: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      building_approved_to_issue_rate: {
+      ldr_coverage: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      cancellation_percentage: {
+      damages_premium: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      total_of_decisioned_app: {
+      total_coverage_amount: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      total_of_approved_app: {
+      tenant_1_id: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      total_of_decisioned_app: {
+      tenant_1_name: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      decline_percentage: {
+      tenant_1_fee_input: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      billingState: {
+      tenant_1_portion_fee: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      tenant_1_contact_id: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      total_units: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      leap_total_inventory: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      total_active_leap_units: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      estimated_app_decline_rate: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      total_units: {
         type: DataTypes.STRING,
         allowNull: true,
       },
       sf_createdDate: {
         type: DataTypes.STRING,
         allowNull: true,
-      },
-      billingCity: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
+      }
     },
     {
-      tableName: 'building',
+      tableName: 'application',
       schema: common_constants.SCHEMA_MAPPING[process.env.NODE_ENV],
     }
   );

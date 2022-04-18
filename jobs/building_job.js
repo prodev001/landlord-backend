@@ -1,7 +1,7 @@
 
 import get_sf_connection from '../helpers/sf_helper';
-import query from "./query";
-import building_repository from "../controllers/building_repository";
+import query from "../helpers/query";
+import Building_repository from "../controllers/building_controller";
 
 let data = [];
 
@@ -14,7 +14,7 @@ const nextQuery = async (url, sf_conn) => {
         if(!ret.done) {
             nextQuery(ret.nextRecordsUrl, sf_conn);
         } else {
-            building_repository.create(data);
+            Building_repository.create(data);
         }
     });
 }
@@ -31,7 +31,7 @@ async function onboard () {
         if(!ret.done) {
             nextQuery(ret.nextRecordsUrl, sf_conn)     
         } else {
-            building_repository.create(data);
+            Building_repository.create(data);
         }
       }
     )

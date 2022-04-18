@@ -29,6 +29,7 @@ const building = `select
                     PRIMARY_CONTACT__C, 
                     EMAIL_ADDRESS__C, 
                     STUDENT_HOUSING__C, 
+                    LANDLORD__C,
                     LANDLORD__R.NAME, 
                     Primary_Contact__r.Email, 
                     PROPERTY_OWNER__C, 
@@ -49,11 +50,50 @@ const building = `select
                     Decline_Percentage__c, 
                     BILLINGSTATE,
                     Createddate, 
-                    BILLINGCITY 
-                    from Account 
+                    BILLINGCITY
+                    from Account
                     where RecordTypeId= '0121I000001BpU7QAK'`
+
+const application = `select 
+                    id,
+                    STAGE__C, 
+                    NAME, 
+                    INSURER__C, 
+                    TOTAL_NUMBER_OF_TENANTS__C, 
+                    Active_Lease__c, 
+                    Months_Remaining__c, 
+                    APPLICATION_TYPE__C, 
+                    RIDER_ID__C, 
+                    GROSS_MONTHLY_RENT__C, 
+                    Gross_Annual_Rent__c, 
+                    LEASE_START_DATE__C, 
+                    LEASE_END_DATE__C, 
+                    DECLINE_REASON_1__C, 
+                    CANCELLATION_REASON__C, 
+                    LANDLORD_ACCOUNT_LOOKUP__R.NAME, 
+                    APARTMENT_BUILDING__C,
+                    APARTMENT_BUILDING__R.NAME, 
+                    ISSUE_DATE__C, 
+                    COVERAGEAMOUNTREQUESTED1__C, 
+                    Coverage_Amount_Requested_months__c, 
+                    LDR_COVERAGE__C, 
+                    DAMAGES_PREMIUM__C, 
+                    TOTAL_COVERAGE_AMOUNT__C, 
+                    TENANT_1__C, 
+                    TENANT_1__R.NAME, 
+                    Tenant_1_Fee_Input__c, 
+                    Tenant_1_Portion_of_Fees__c, 
+                    Tenant_1_Contact_ID__c, 
+                    Apartment_Building__r.Total_of_Units__c, 
+                    Apartment_Building__r.Leap_of_Total_Inventory__c, 
+                    Apartment_Building__r.Total_of_Active_Leap_Units__c, 
+                    Apartment_Building__r.Estimated_Applicant_Decline_Rate__c,
+                    Createddate
+                    from Account
+                    where RecordTypeId= '0121I000001BpTxQAK'`
 
 export default {
     landlord,
-    building
+    building,
+    application
 }

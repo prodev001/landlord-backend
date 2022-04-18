@@ -1,14 +1,18 @@
 import express, { Router } from 'express';
 
-import middleware from "../middleware";
-import { signup, signin } from "../controllers/auth";
+import verifySignUp from "../middleware/verifySignUp";
+import { signup, signin, emailVerify } from "../controllers/auth_controller";
 
 const router = express.Router();
-const { verifySignUp } = middleware;
+
+router.post(
+    "/emailverify",
+    emailVerify,
+);
 
 router.post(
     "/signup",
-    verifySignUp.checkDuplicateUsernameOrEmail,
+    verifySignUp,
     signup
 );
 

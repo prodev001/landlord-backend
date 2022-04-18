@@ -3,25 +3,30 @@ import fs from 'fs';
 
 const Building = models.building;
 
-const building_repository = {
-  findLandlord: (id) => {
-    return Building.find({
+const Building_repository = {
+  findBuilding: (req, res) => {
+    Building.findAll({
       where: {
-        id: id,
+        landlord_id: '0018W00001bUKAqQAO',
       },
+      // offset: 100, limit: 10
+    })
+    .then(buildings => {
+      const data = [];
+      buildings.forEach(item => {
+        data.push(item.dataValues);
+      });
+      res.status(200).send({
+        data: data
+      });
+    })
+    .catch(err => {
+      res.status(500).send({ message: err.message });
     });
   },
 
   create: (record) => {
     const data = [];
-    // let textdata = JSON.stringify(record);
-    // fs.writeFile('landlord.txt', textdata, (err) => {
-    //     // throws an error, you could also catch it here
-    //     if (err) throw err;
-    
-    //     // success case, the file was saved
-    //     console.log('saved!');
-    //     });
     record.forEach((obj, index) => {
         const landlord_name = obj.Landlord__r ? obj.Landlord__r.Name : null; 
         const primary_contact = obj.Primary_Contact__r ? obj.Primary_Contact__r.Email : null;
@@ -33,6 +38,7 @@ const building_repository = {
             billingStreet: obj.BillingStreet,
             email_address: obj.Email_Address__c,
             student_housing: obj.Student_Housing__c,
+            landlord_id: obj.Landlord__c,
             landlord_name: landlord_name,
             primary_contact: primary_contact,
             property_owner: obj.Property_Owner__c,
@@ -56,7 +62,7 @@ const building_repository = {
             billingCity: obj.BillingCity
         })
     });
-    Building.bulkCreate(data).then(() => console.log('created successfully'));
+    Building.bulkCreate(data).then(() => console.log('Building created successfully'));
   },
 
   deletePermanently: (where_options) => {
@@ -66,4 +72,4 @@ const building_repository = {
   },
 };
 
-export default building_repository;
+export default Building_repository;

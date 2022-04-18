@@ -6,16 +6,28 @@ export default (sequelize, DataTypes) => {
     {
       username: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
       },
       email: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       password: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
+      landlord_name: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
+      landlord_id: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      user_role: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      }
     },
     {
       tableName: 'users',

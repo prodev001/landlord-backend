@@ -3,14 +3,10 @@ import 'dotenv/config';
 import express from 'express';
 import helmet from 'helmet';
 import logger from 'morgan';
-import jsforce from "jsforce";
-import cors from "cors";
-import cron from 'node-cron';
 
 import jobs from './jobs';
 import models from './models/index.js';
 import routes from './routes';
-import user from './routes/user';
 
 const port = process.env.PORT || 8000;
 const app = express();
@@ -50,38 +46,12 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to bezkoder application." });
 });
 
-models.sequelize.sync({ force: true }).then(() => {
+// models.sequelize.sync({ force: true }).then(() => {
   app.listen(port, () => {
   console.log(`Server is running on port ${port}.`);
     // jobs();
-    initial();
+    // initial();
   });
   // initial();
   // sf_connec();
-});
-
-const Role = models.role;
-function initial() {
-  Role.create({
-    id: 1,
-    name: "Admin",
-  });
- 
-  Role.create({
-    id: 2,
-    name: "Landlord",
-  });
- 
-  Role.create({
-    id: 3,
-    name: "Vice President",
-  });
-  Role.create({
-    id: 4,
-    name: "Regional Manager",
-  });
-  Role.create({
-    id: 5,
-    name: "Property Manager",
-  });
-}
+// });

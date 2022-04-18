@@ -2,7 +2,7 @@ import models from '../models';
 
 const Landlord = models.landlord;
 
-const landlord_repository = {
+const Landlord_repository = {
   findLandlord: (id) => {
     return Landlord.find({
       where: {
@@ -14,7 +14,6 @@ const landlord_repository = {
   create: (record) => {
     const data = [];
     record.forEach(obj => {
-      console.log(obj.Primary_Contact__r);
       const primary_contact = obj.Primary_Contact__r ? obj.Primary_Contact__r.Name : null;
       data.push({
           landlord_id: obj.Id,
@@ -38,7 +37,7 @@ const landlord_repository = {
       })
     });
 
-    Landlord.bulkCreate(data).then(() => console.log('created successfully'));
+    Landlord.bulkCreate(data).then(() => console.log('Landlord created successfully'));
   },
 
   deletePermanently: (where_options) => {
@@ -48,4 +47,4 @@ const landlord_repository = {
   },
 };
 
-export default landlord_repository;
+export default Landlord_repository;

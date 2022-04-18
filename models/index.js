@@ -4,8 +4,8 @@ import configObj from '../config/config.json';
 import PropertyModel from "./property_model";
 import buildingModel from "./building_model";
 import landlordModel  from "./landlord_model";
+import appModel from "./application_model";
 import userModel from "./user_model";
-import roleModel from "./role_model";
 
 const env = process.env.NODE_ENV || 'development';
 const config = configObj[env];
@@ -50,24 +50,12 @@ if (env === 'development') {
 }
 
 const models = {
-  property: PropertyModel(sequelize, Sequelize.DataTypes),
-  building: buildingModel(sequelize, Sequelize.DataTypes),
-  landlord: landlordModel(sequelize, Sequelize.DataTypes),
-  user: userModel(sequelize, Sequelize.DataTypes),
-  role: roleModel(sequelize, Sequelize.DataTypes)
+  // property: PropertyModel(sequelize, Sequelize.DataTypes),
+  // building: buildingModel(sequelize, Sequelize.DataTypes),
+  // landlord: landlordModel(sequelize, Sequelize.DataTypes),
+  application: appModel(sequelize, Sequelize.DataTypes),
+  // user: userModel(sequelize, Sequelize.DataTypes),
 };
-
-models.role.belongsToMany(models.user, {
-  through: "user_roles",
-  foreignKey: "roleId",
-  otherKey: "userId"
-});
-
-models.user.belongsToMany(models.role, {
-  through: "user_roles",
-  foreignKey: "userId",
-  otherKey: "roleId"
-});
 
 
 models.sequelize = sequelize;

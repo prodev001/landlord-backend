@@ -2,9 +2,8 @@ import models from "../models";
 
 const User = models.user;
 
-const checkDuplicateUsernameOrEmail = (req, res, next) => {
+const verifySignUp = (req, res, next) => {
   // Username
-  console.log(req.body);
   User.findOne({
     where: {
       username: req.body.username
@@ -16,26 +15,8 @@ const checkDuplicateUsernameOrEmail = (req, res, next) => {
       });
       return;
     }
-    // Email
-    User.findOne({
-      where: {
-        email: req.body.email
-      }
-    }).then(user => {
-      if (user) {
-        res.status(400).send({
-          message: "Failed! Email is already in use!"
-        });
-        return;
-      }
-      next();
-    });
+    next();
   });
-};
-
-
-const verifySignUp = {
-  checkDuplicateUsernameOrEmail: checkDuplicateUsernameOrEmail,
 };
 
 export default verifySignUp;
