@@ -2,7 +2,7 @@ import models from '../models';
 
 const User = models.user;
 
-const User_repository = {
+const User_controller = {
     
   findLandlord: (id) => {
     return Landlord.find({
@@ -34,4 +34,4 @@ const User_repository = {
   },
 };
 
-export default User_repository;
+export default User_controller;

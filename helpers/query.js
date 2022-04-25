@@ -16,7 +16,7 @@ const landlord = `select
                     RecordTypeId, 
                     ParentId, 
                     LANDLORD_PRIMARY_CONTACT_EMAIL_RPT__C, 
-                    Last_Visit_Date__c
+                    Last_Visit_Date__c,
                     from Account
                     where RecordTypeId= '0121I000001BpU2QAK'`
 
@@ -70,6 +70,7 @@ const application = `select
                     LEASE_END_DATE__C, 
                     DECLINE_REASON_1__C, 
                     CANCELLATION_REASON__C, 
+                    LANDLORD_ACCOUNT_LOOKUP__C, 
                     LANDLORD_ACCOUNT_LOOKUP__R.NAME, 
                     APARTMENT_BUILDING__C,
                     APARTMENT_BUILDING__R.NAME, 
@@ -92,8 +93,39 @@ const application = `select
                     from Account
                     where RecordTypeId= '0121I000001BpTxQAK'`
 
+const claim =   `select 
+                    CLAIM_STATUS_DESCRIPTION__C, 
+                    APPLICATION_TYPE__C, 
+                    Rider_ID__c, 
+                    APARTMENT_BUILDING__C, 
+                    TENANT1_ON_LEASE__C, 
+                    TENANT2_ON_LEASE__C, 
+                    TENANT3_ON_LEASE__C, 
+                    Tenant4_on_Lease__c, 
+                    MONTHLY_RENT__C, 
+                    TOTAL_INDEMNITY_PAYMENTS__C, 
+                    APARTMENT_BUILDING_ADDRESS__C, 
+                    LEASE_START_DATE__C, 
+                    LEASE_END_DATE__C, 
+                    ACCOUNT_NAME__C, 
+                    Rider__r.Months_Remaining__c, 
+                    Rider__r.Insurable_Value__c, 
+                    Rider__r.Active_Lease__c, 
+                    LANDLORD__C, 
+                    LANDLORD__R.NAME, 
+                    BOND_ISSUE_DATE__C, 
+                    Rider__r.Coverage_Amount_Requested_months__c, 
+                    Rider__r.LDR_Coverage__c, 
+                    Rider__r.Total_Number_of_Tenants__c, 
+                    Rider__r.Gross_Annual_Rent__c, 
+                    Rider__r.Damage_Coverage_Amount__c, 
+                    Rider__r.Total_Rent__c, 
+                    Rider__r.Total_Coverage_Amount__c 
+                    from Claim__c`
+
 export default {
     landlord,
     building,
-    application
+    application,
+    claim
 }

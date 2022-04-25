@@ -2,12 +2,21 @@ import models from '../models';
 
 const Landlord = models.landlord;
 
-const Landlord_repository = {
-  findLandlord: (id) => {
-    return Landlord.find({
-      where: {
-        id: id,
-      },
+const Landlord_controller = {
+  findLandlord: (req, res) => {
+    const buildingId = req.query.buildingId;
+    Landlord.findAll()
+    .then(landlords => {
+      const data = [];
+      landlords.forEach(ll => {
+        data.push(ll.dataValues);
+      });
+      res.status(200).send({
+        data: data
+      });
+    })
+    .catch(err => {
+      res.status(500).send({ message: err.message });
     });
   },
 
@@ -47,4 +56,4 @@ const Landlord_repository = {
   },
 };
 
-export default Landlord_repository;
+export default Landlord_controller;

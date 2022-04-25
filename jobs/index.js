@@ -3,6 +3,7 @@ import EventEmitter from 'events';
 import landlord from './landlord_job';
 import building from './building_job';
 import application from './application_job';
+import claim from './claim_job';
 
 const event = new EventEmitter();
 
@@ -13,7 +14,8 @@ const jobs = async () => {
       { 
           // await landlord.onboard();
           // await building.onboard();
-          await application.onboard();
+          // await application.onboard();
+          // await claim.onboard();
         },
         {
           scheduled: true,

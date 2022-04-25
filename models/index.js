@@ -1,7 +1,7 @@
 import Sequelize from 'sequelize';
 import configObj from '../config/config.json';
 // import fs from 'fs';
-import PropertyModel from "./property_model";
+import claimModel from "./claim_model";
 import buildingModel from "./building_model";
 import landlordModel  from "./landlord_model";
 import appModel from "./application_model";
@@ -50,11 +50,11 @@ if (env === 'development') {
 }
 
 const models = {
-  // property: PropertyModel(sequelize, Sequelize.DataTypes),
-  // building: buildingModel(sequelize, Sequelize.DataTypes),
-  // landlord: landlordModel(sequelize, Sequelize.DataTypes),
+  claim: claimModel(sequelize, Sequelize.DataTypes),
+  building: buildingModel(sequelize, Sequelize.DataTypes),
+  landlord: landlordModel(sequelize, Sequelize.DataTypes),
   application: appModel(sequelize, Sequelize.DataTypes),
-  // user: userModel(sequelize, Sequelize.DataTypes),
+  user: userModel(sequelize, Sequelize.DataTypes),
 };
 
 

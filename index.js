@@ -52,6 +52,4 @@ app.get("/", (req, res) => {
     // jobs();
     // initial();
   });
-  // initial();
-  // sf_connec();
 // });

@@ -1,7 +1,7 @@
 
 import get_sf_connection from '../helpers/sf_helper';
 import query from "../helpers/query";
-import Application_repository from "../controllers/application_controller";
+import Claim_repository from "../controllers/claim_controller";
 
 let data = [];
 
@@ -15,7 +15,7 @@ const nextQuery = async (url, sf_conn) => {
             if(!ret.done) {
               nextQuery(ret.nextRecordsUrl, sf_conn);
             } else {
-              Application_repository.create(data);
+                Claim_repository.create(data);
             }
         });
     } catch (error) {
@@ -27,18 +27,18 @@ async function onboard () {
     let sf_conn = await get_sf_connection();
     try {
         await sf_conn.query(
-            query.application,
+            query.claim,
             function(err, ret) {
               if (err) {
                 return console.error(err);
               }
                 data = data.concat(ret.records);
-                Application_repository.create(data);
-                // if(!ret.done) {
-                //   nextQuery(ret.nextRecordsUrl, sf_conn)     
-                // } else {
-                //   Application_repository.create(data);
-                // }
+                console.log(ret.totalSize);
+                if(!ret.done) {
+                  nextQuery(ret.nextRecordsUrl, sf_conn)     
+                } else {
+                    Claim_repository.create(data);
+                }
               }
             )
     } catch (error) {

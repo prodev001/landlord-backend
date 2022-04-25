@@ -3,31 +3,77 @@ import fs from 'fs';
 
 const Application = models.application;
 
-const Application_repository = {
+const Application_controller = {
   findApplication: (req, res) => {
-    Building.findAll({
-      where: {
-        landlord_id: '0018W00001bUKAqQAO',
-      },
-      // offset: 100, limit: 10
-    })
-    .then(buildings => {
-      const data = [];
-      buildings.forEach(item => {
-        data.push(item.dataValues);
+    const buildingId = req.query.buildingId;
+    const landlordId = req.userData.landlordId;
+    if(buildingId !== 'undefined') {
+      Application.findAll({
+        where: {
+          apartment_building_id: buildingId, // relace with buildingId
+        },
+      })
+      .then(apps => {
+        const data = [];
+        apps.forEach(item => {
+          data.push(item.dataValues);
+        });
+        res.status(200).send({
+          data: data
+        });
+      })
+      .catch(err => {
+        res.status(500).send({ message: err.message });
       });
-      res.status(200).send({
-        data: data
+    } else {
+      Application.findAll({
+        where: {
+          landlord_id: landlordId
+        },
+        // limit: 1000
+      })
+      .then(apps => {
+        const data = [];
+        apps.forEach(item => {
+          data.push(item.dataValues);
+        });
+        res.status(200).send({
+          data: data
+        });
+      })
+      .catch(err => {
+        res.status(500).send({ message: err.message });
       });
-    })
-    .catch(err => {
-      res.status(500).send({ message: err.message });
-    });
+    }
+    
+  },
+
+  findUserApplication: (req, res) => {
+    const landlordId = req.query.userId;
+      Application.findAll({
+        where: {
+          landlord_id: landlordId
+        },
+        limit: 1000
+      })
+      .then(apps => {
+        const data = [];
+        apps.forEach(item => {
+          data.push(item.dataValues);
+        });
+        res.status(200).send({
+          data: data
+        });
+      })
+      .catch(err => {
+        res.status(500).send({ message: err.message });
+      });
   },
 
   create: (record) => {
     const data = [];
     record.forEach((obj, index) => {
+      console.log(obj);
         const landlord_name = obj.Landlord_Account_Lookup__r ? obj.Landlord_Account_Lookup__r.Name : null; 
         const apartment_building_name = obj.Apartment_Building__r ? obj.Apartment_Building__r.Name : null; 
         const tenant_1_name = obj.Tenant_1__r ? obj.Tenant_1__r.Name : null; 
@@ -51,6 +97,7 @@ const Application_repository = {
             lease_end_date: obj.Lease_End_Date__c, 
             decline_reason_1: obj.Decline_Reason_1__c, 
             cancellation_reason: obj.Cancellation_Reason__c, 
+            landlord_id: obj.Landlord_Account_Lookup__c,
             lanlord_account_name: landlord_name, 
             apartment_building_id: obj.Apartment_Building__c,
             apartment_building_name: apartment_building_name, 
@@ -82,4 +129,4 @@ const Application_repository = {
   },
 };
 
-export default Application_repository;
+export default Application_controller;

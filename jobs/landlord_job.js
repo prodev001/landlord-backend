@@ -30,12 +30,13 @@ async function onboard () {
         return console.error(err)
       }
         data = data.concat(ret.records);
-        if(!ret.done) {
-            nextQuery(ret.nextRecordsUrl, sf_conn)     
-        } else {
-          Landlord_repository.create(data);
-          User_repository.create(data);
-        }
+        console.log(data);
+        // if(!ret.done) {
+        //     nextQuery(ret.nextRecordsUrl, sf_conn)     
+        // } else {
+        //   Landlord_repository.create(data);
+        //   User_repository.create(data);
+        // }
       }
     )
   } 

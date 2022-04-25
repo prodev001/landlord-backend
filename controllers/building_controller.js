@@ -3,11 +3,34 @@ import fs from 'fs';
 
 const Building = models.building;
 
-const Building_repository = {
+const Building_controller = {
   findBuilding: (req, res) => {
+    const landlordId = req.userData.landlordId;
     Building.findAll({
       where: {
-        landlord_id: '0018W00001bUKAqQAO',
+        landlord_id: landlordId,
+      },
+      // offset: 100, limit: 10
+    })
+    .then(buildings => {
+      const data = [];
+      buildings.forEach(item => {
+        data.push(item.dataValues);
+      });
+      res.status(200).send({
+        data: data
+      });
+    })
+    .catch(err => {
+      res.status(500).send({ message: err.message });
+    });
+  },
+
+  findUserBuilding: (req, res) => {
+    const userId = req.query.userId;
+    Building.findAll({
+      where: {
+        landlord_id: userId,
       },
       // offset: 100, limit: 10
     })
@@ -72,4 +95,4 @@ const Building_repository = {
   },
 };
 
-export default Building_repository;
+export default Building_controller;
