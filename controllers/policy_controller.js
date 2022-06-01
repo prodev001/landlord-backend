@@ -1,29 +1,47 @@
 import models from '../models';
-import fs from 'fs';
+import Sequelize from 'sequelize';
+var Op = Sequelize.Op;
 
-const Application = models.application;
+const Application = models.Application;
 
 const Policy_controller = {
-    findPolicy: (req, res) => {
-      Application.findAll({
-        where: {
-            stage: '05 - Policy Issued', // relace with buildingId
-        },
-        limit: 1000
-      })
-      .then(apps => {
-          console.log(apps);
-        const data = [];
-        apps.forEach(item => {
-          data.push(item.dataValues);
-        });
+
+    findPolicy: async (req, res) => {
+      const landlordId = req.userData.landlordId;
+      const userRole = req.userData.role;
+      const userEmail = req.userData.email;
+      const userId = req.userData.userId;
+      const property = req.userData.property;
+      let policies;
+      try {
+        if(userRole === 'admin') {
+          policies = await Application.findAll({
+            where: {
+              stage: '05 - Policy Issued',
+            },
+          }
+          )
+        } else if(userRole === 'll') {
+          policies = await Application.findAll({
+            where: {
+              stage: '05 - Policy Issued',
+              landlord_id: landlordId,
+            },
+          })
+        } else if (userRole === 'vp' || userRole === 'rm' || userRole === 'pm') {
+          policies = await Application.findAll({
+              where: {
+                stage: '05 - Policy Issued',
+                apartment_building_id: { [Op.in]: property } 
+              }
+            })
+        }
         res.status(200).send({
-          data: data
+          data: policies
         });
-      })
-      .catch(err => {
-        res.status(500).send({ message: err.message });
-      });
+      } catch (error) {
+        res.status(500).send({ message: error.message });
+      }
     },
 
     findUserPolicy: (req, res) => {
@@ -36,13 +54,8 @@ const Policy_controller = {
         //   limit: 1000
         })
         .then(apps => {
-            console.log(apps);
-          const data = [];
-          apps.forEach(item => {
-            data.push(item.dataValues);
-          });
           res.status(200).send({
-            data: data
+            data: apps
           });
         })
         .catch(err => {

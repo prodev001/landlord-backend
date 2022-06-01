@@ -124,6 +124,10 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      damageCoverageAmount: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      }
     },
     {
       tableName: 'building',

@@ -2,7 +2,7 @@
 import jwt from 'jsonwebtoken';
 import models from "../models";
 
-const User = models.user;
+const User = models.User;
 
 const authJwt = (req, res, next) => {
   const token = req.headers.authorization;
@@ -17,7 +17,14 @@ const authJwt = (req, res, next) => {
         message: "Unauthorized!"
       });
     }
-    req.userData = { email: decoded.email, userId: decoded.userId, landlordId: decoded.landlordId };
+    req.userData = { 
+      name:decoded.username, 
+      email: decoded.email, 
+      userId: decoded.userId, 
+      landlordId: decoded.landlordId, 
+      role: decoded.role,
+      property: decoded.property
+    };
     next();
   });
 };

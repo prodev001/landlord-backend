@@ -4,6 +4,12 @@ export default (sequelize, DataTypes) => {
   return sequelize.define(
     'users',
     {
+      id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true,
+        autoIncrement: true,
+      },
       username: {
         type: DataTypes.STRING,
         allowNull: true
@@ -24,9 +30,17 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      user_role: {
+      role: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
+      },
+      active: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+      },
+      isVerified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
       }
     },
     {

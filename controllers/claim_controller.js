@@ -1,66 +1,73 @@
 import models from '../models';
-import fs from 'fs';
+import Sequelize from 'sequelize';
+var Op = Sequelize.Op;
 
-const Claim = models.claim;
+const Claim = models.Claim;
 
 const Claim_controller = {
-  findClaim: (req, res) => {
+  findClaim: async (req, res) => {
     const buildingId = req.query.buildingId;
-    if(buildingId !== 'undefined') {
-        Claim.findAll({
+    const userRole = req.userData.role;
+    const landlordId = req.userData.landlordId;
+    const property = req.userData.property;
+    let claims;
+    try {
+      if(buildingId !== 'undefined') {
+        claims = await Claim.findAll({
           where: {
             apartment_building_id: buildingId, // relace with buildingId
           },
         })
-        .then(claims => {
-          const data = [];
-          claims.forEach(item => {
-            data.push(item.dataValues);
+      } else {
+        if(userRole === 'admin') {
+          claims = await Claim.findAll();
+        } else if (userRole === 'll') {
+          claims = await  Claim.findAll({
+            where: {
+              landlord_id: landlordId
+            }
           });
-          res.status(200).send({
-            data: data
-          });
-        })
-        .catch(err => {
-          res.status(500).send({ message: err.message });
-        });
-    } else {
-        Claim.findAll()
-          .then(claims => {
-            const data = [];
-            claims.forEach(item => {
-              data.push(item.dataValues);
+        } else {
+            claims = await  Claim.findAll({
+              where: {
+                apartment_building_id: { [Op.in]: property } 
+              }
             });
-            res.status(200).send({
-              data: data
-            });
-          })
-          .catch(err => {
-            res.status(500).send({ message: err.message });
-          });
+        }
+      }      
+      res.status(200).send({
+        data: claims
+      });
+    } catch (error) {
+      res.status(500).send({ message: err.message });
     }
+
   },
 
-  findUserClaim: (req, res) => {
-    const userId = req.query.userId;
-    console.log(userId);
-    Claim.findAll({
-      where: {
-        landlord_id: userId
-      },
-    })
-    .then(claims => {
-      const data = [];
-      claims.forEach(item => {
-        data.push(item.dataValues);
-      });
+  findUserClaim: async (req, res) => {
+    const buildingId = req.query.buildingId;
+    const landlordId = req.query.landlordId;
+    let claims;
+    try {
+      if(!landlordId) {
+        claims = await Claim.findAll({
+          where: {
+            apartment_building_id: buildingId
+          },
+        })
+      } else {
+        claims = await Claim.findAll({
+          where: {
+            landlord_id: landlordId
+          },
+        })
+      }
       res.status(200).send({
-        data: data
+        data: claims
       });
-    })
-    .catch(err => {
-      res.status(500).send({ message: err.message });
-    });
+    } catch (error) {
+      res.status(500).send({ message: error.message });
+    }
   },
 
   create: (record) => {

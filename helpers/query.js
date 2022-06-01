@@ -16,7 +16,7 @@ const landlord = `select
                     RecordTypeId, 
                     ParentId, 
                     LANDLORD_PRIMARY_CONTACT_EMAIL_RPT__C, 
-                    Last_Visit_Date__c,
+                    Last_Visit_Date__c
                     from Account
                     where RecordTypeId= '0121I000001BpU2QAK'`
 
@@ -117,8 +117,7 @@ const claim =   `select
                     Rider__r.Coverage_Amount_Requested_months__c, 
                     Rider__r.LDR_Coverage__c, 
                     Rider__r.Total_Number_of_Tenants__c, 
-                    Rider__r.Gross_Annual_Rent__c, 
-                    Rider__r.Damage_Coverage_Amount__c, 
+                    Rider__r.Gross_Annual_Rent__c,
                     Rider__r.Total_Rent__c, 
                     Rider__r.Total_Coverage_Amount__c 
                     from Claim__c`

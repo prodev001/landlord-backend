@@ -1,23 +1,30 @@
 import models from '../models';
+import {sendLandlordInviteEmail} from '../util/util';
 
-const Landlord = models.landlord;
+const Landlord = models.Landlord;
 
 const Landlord_controller = {
-  findLandlord: (req, res) => {
-    const buildingId = req.query.buildingId;
-    Landlord.findAll()
-    .then(landlords => {
-      const data = [];
-      landlords.forEach(ll => {
-        data.push(ll.dataValues);
-      });
+
+  findInviteLandlord: async (req, res) => {
+    try {
+      const landlords = await Landlord.findAll({where: {active: false}});
       res.status(200).send({
-        data: data
+        data: landlords
       });
-    })
-    .catch(err => {
-      res.status(500).send({ message: err.message });
-    });
+    } catch (error) {
+      res.status(500).send({ message: error.message });
+    }
+  },
+
+  findActiveLandlord: async (req, res) => {
+    try {
+      const landlords = await Landlord.findAll({where: {active: true}});
+      res.status(200).send({
+        data: landlords
+      });
+    } catch (error) {
+      res.status(500).send({ message: error.message });
+    }
   },
 
   create: (record) => {
@@ -49,11 +56,48 @@ const Landlord_controller = {
     Landlord.bulkCreate(data).then(() => console.log('Landlord created successfully'));
   },
 
-  deletePermanently: (where_options) => {
-    return Landlord.destroy({
-      where: where_options,
+  deleteLandlord: (req, res) => {
+    Landlord.destroy({
+      where: {landlord_id: req.body},
+    }).then(count => {
+      if (!count) {
+        return res.status(404).send({error: 'No user'});
+       }
+       Landlord.findAll()
+      .then(landlords => {
+          const data = [];
+          landlords.forEach(ll => {
+            data.push(ll.dataValues);
+          });
+          res.status(200).send({
+            message: 'User Deleted Successfully',
+            data: data
+          });
+        })
+        .catch(err => {
+          res.status(500).send({ message: err.message });
+        });
+    })
+    .catch(err => {
+      res.status(500).send({ message: err.message });
     });
   },
+
+  sendInviteEmail: async (req, res) => {
+    const payload = req.body;
+    const {toEmail, emailContent, emailSubject, landlordID} = payload;
+    console.log(toEmail, emailContent, emailSubject,landlordID);
+      for (let index = 0; index < toEmail.length; index++) {
+        const data = {
+          toEmail: toEmail[index],
+          emailSubject,
+          emailContent,
+          landlordId: landlordID[index]
+        }
+        console.log(data);
+        await sendLandlordInviteEmail(res, data);
+      }
+  }
 };
 
 export default Landlord_controller;

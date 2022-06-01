@@ -1,51 +1,82 @@
 import models from '../models';
-import fs from 'fs';
+import Sequelize from 'sequelize';
+var Op = Sequelize.Op;
 
-const Building = models.building;
+const Building = models.Building;
+const Delegation = models.Delegation;
 
 const Building_controller = {
-  findBuilding: (req, res) => {
-    const landlordId = req.userData.landlordId;
-    Building.findAll({
-      where: {
-        landlord_id: landlordId,
-      },
-      // offset: 100, limit: 10
-    })
-    .then(buildings => {
-      const data = [];
-      buildings.forEach(item => {
-        data.push(item.dataValues);
-      });
+
+  findAllBuilding: async (req, res) => {
+    try {
+      const buildings = await Building.findAll({
+        limit: 2000
+      })
       res.status(200).send({
-        data: data
+        data: buildings
       });
-    })
-    .catch(err => {
-      res.status(500).send({ message: err.message });
-    });
+    } catch (error) {
+      res.status(500).send({ message: error.message });
+    }
   },
 
-  findUserBuilding: (req, res) => {
-    const userId = req.query.userId;
-    Building.findAll({
-      where: {
-        landlord_id: userId,
-      },
-      // offset: 100, limit: 10
-    })
-    .then(buildings => {
-      const data = [];
-      buildings.forEach(item => {
-        data.push(item.dataValues);
-      });
+  findBuilding: async (req, res) => {
+    const landlordId = req.userData.landlordId;
+    const userRole = req.userData.role;
+    const userEmail = req.userData.email;
+    const userId = req.userData.userId;
+    const property = req.userData.property;
+    let buildings;
+    try {
+      if(userRole === 'admin') {
+        buildings = await Building.findAll({limit: 2000})
+      } else if(userRole === 'll') {
+        buildings = await Building.findAll({
+          where: {
+            landlord_id: landlordId,
+          },
+        })
+      } else if (userRole === 'vp' || userRole === 'rm' || userRole === 'pm') {
+          buildings = await Building.findAll({
+            where: {
+              building_id: { [Op.in]: property } 
+            }
+          })
+      }
       res.status(200).send({
-        data: data
+        data: buildings
       });
-    })
-    .catch(err => {
-      res.status(500).send({ message: err.message });
-    });
+    } catch (error) {
+      res.status(500).send({ message: error.message });
+    }
+  },
+
+  getUserBuilding: async (req, res) => {
+    const {data} = req.body;
+    const landlordId = req.query.landlordId;
+
+    try {
+      let buildings;
+      if(!landlordId) {
+        buildings = await Building.findAll({
+          where: {
+            building_id: { [Op.in]: data },
+          },
+        })
+      } else {
+        buildings = await Building.findAll({
+          where: {
+            landlord_id: landlordId,
+          },
+        })
+      }
+      res.status(200).send({
+        data: buildings
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ message: error.message });
+    }
   },
 
   create: (record) => {
@@ -82,7 +113,8 @@ const Building_controller = {
             decline_percentage: obj.Decline_Percentage__c,
             billingState: obj.BillingState,
             sf_createdDate: obj.CreatedDate,
-            billingCity: obj.BillingCity
+            billingCity: obj.BillingCity,
+            damageCoverageAmount: obj.Damage_Coverage_Amount__c
         })
     });
     Building.bulkCreate(data).then(() => console.log('Building created successfully'));

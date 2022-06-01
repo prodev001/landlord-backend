@@ -16,7 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.757.0",
+    "aws-sdk": "^2.1124.0",
     "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
@@ -48,7 +48,8 @@
     "regex-test": "^0.1.1",
     "sequelize": "^5.22.3",
     "sqs-consumer": "^5.4.0",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "web-push": "^3.5.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

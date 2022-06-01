@@ -1,6 +1,6 @@
 import models from '../models';
 
-const User = models.user;
+const User = models.User;
 
 const User_controller = {
     
@@ -27,9 +27,15 @@ const User_controller = {
     User.bulkCreate(data).then(() => console.log('User created successfully'));
   },
 
-  deletePermanently: (where_options) => {
-    return User.destroy({
-      where: where_options,
+  deleteUser: (req, res, next) => {
+    const { emails } = req.body;
+    User.destroy({
+      where: {email: emails},
+    }).then(count => {
+       
+    })
+    .catch(err => {
+      res.status(500).send({ message: err.message });
     });
   },
 };

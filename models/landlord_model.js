@@ -8,6 +8,10 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      active: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+      },
       name: {
         type: DataTypes.STRING,
         allowNull: true,

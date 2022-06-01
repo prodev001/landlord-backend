@@ -1,79 +1,95 @@
 import models from '../models';
-import fs from 'fs';
+import Sequelize from 'sequelize';
+var Op = Sequelize.Op;
 
-const Application = models.application;
+const Application = models.Application;
+const Delegation = models.Delegation;
 
 const Application_controller = {
-  findApplication: (req, res) => {
+
+  findApplication: async (req, res) => {
     const buildingId = req.query.buildingId;
     const landlordId = req.userData.landlordId;
-    if(buildingId !== 'undefined') {
-      Application.findAll({
-        where: {
-          apartment_building_id: buildingId, // relace with buildingId
-        },
-      })
-      .then(apps => {
-        const data = [];
-        apps.forEach(item => {
-          data.push(item.dataValues);
-        });
-        res.status(200).send({
-          data: data
-        });
-      })
-      .catch(err => {
-        res.status(500).send({ message: err.message });
+    const userRole = req.userData.role;
+    const userEmail = req.userData.email;
+    const userId = req.userData.userId;
+    let apps;
+    try {
+      if(buildingId !== 'undefined') {
+        apps = await Application.findAll({
+          where: {
+            apartment_building_id: buildingId,
+          },
+        })
+      } else {
+        if(userRole === 'admin') {
+          apps = await Application.findAll({
+            limit: 1000
+          })
+        } else if(userRole === 'll') {
+          apps = await Application.findAll({
+            where: {
+              landlord_id: landlordId
+            },
+          })
+        } else {
+          const delegate = await Delegation.findOne({
+            where: {
+              accepter_email: userEmail,
+              accepter_role: userRole
+            }
+          })
+          if(!delegate) {
+              return res.status(404).send({ message: "Property Not found." });
+          }
+          apps = await Application.findAll({
+            where: {
+              apartment_building_id: { [Op.in]: delegate.property } 
+            }
+          })
+        }
+      }
+      res.status(200).send({
+        data: apps
       });
-    } else {
-      Application.findAll({
-        where: {
-          landlord_id: landlordId
-        },
-        // limit: 1000
-      })
-      .then(apps => {
-        const data = [];
-        apps.forEach(item => {
-          data.push(item.dataValues);
-        });
-        res.status(200).send({
-          data: data
-        });
-      })
-      .catch(err => {
-        res.status(500).send({ message: err.message });
-      });
+
+    } catch (error) {
+      res.status(500).send({ message: error.message });
     }
+
     
   },
 
-  findUserApplication: (req, res) => {
-    const landlordId = req.query.userId;
-      Application.findAll({
-        where: {
-          landlord_id: landlordId
-        },
-        limit: 1000
-      })
-      .then(apps => {
-        const data = [];
-        apps.forEach(item => {
-          data.push(item.dataValues);
-        });
-        res.status(200).send({
-          data: data
-        });
-      })
-      .catch(err => {
-        res.status(500).send({ message: err.message });
+  findUserApplication: async (req, res) => {
+    const buildingId = req.query.buildingId;
+    const landlordId = req.query.landlordId;
+    let apps;
+    try {
+      if(!landlordId) {
+        apps = await Application.findAll({
+          where: {
+            apartment_building_id: buildingId
+          },
+        })
+      } else {
+        apps = await Application.findAll({
+          where: {
+            landlord_id: landlordId
+          },
+        })
+      }
+      res.status(200).send({
+        data: apps
       });
+    } catch (error) {
+      res.status(500).send({ message: error.message });
+    }
+      
   },
 
   create: (record) => {
     const data = [];
     record.forEach((obj, index) => {
-      console.log(obj);
         const landlord_name = obj.Landlord_Account_Lookup__r ? obj.Landlord_Account_Lookup__r.Name : null; 
         const apartment_building_name = obj.Apartment_Building__r ? obj.Apartment_Building__r.Name : null; 
         const tenant_1_name = obj.Tenant_1__r ? obj.Tenant_1__r.Name : null; 

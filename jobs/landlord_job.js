@@ -16,7 +16,6 @@ const nextQuery = async (url, sf_conn) => {
             nextQuery(ret.nextRecordsUrl, sf_conn);
         } else {
             Landlord_repository.create(data);
-            User_repository.create(data);
         }
     });
 }
@@ -29,13 +28,12 @@ async function onboard () {
       if (err) {
         return console.error(err)
       }
-        data = data.concat(ret.records);
-        console.log(data);
+      Landlord_repository.create(ret.records);
+        // data = data.concat(ret.records);
         // if(!ret.done) {
         //     nextQuery(ret.nextRecordsUrl, sf_conn)     
         // } else {
         //   Landlord_repository.create(data);
-        //   User_repository.create(data);
         // }
       }
     )

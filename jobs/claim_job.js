@@ -33,7 +33,6 @@ async function onboard () {
                 return console.error(err);
               }
                 data = data.concat(ret.records);
-                console.log(ret.totalSize);
                 if(!ret.done) {
                   nextQuery(ret.nextRecordsUrl, sf_conn)     
                 } else {
