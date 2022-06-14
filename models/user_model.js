@@ -18,6 +18,18 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      image: {
+        type: DataTypes.TEXT,
+        allowNull: true
+      },
+      phone: {
+        type: DataTypes.TEXT,
+        allowNull: true
+      },
+      job_title: {
+        type: DataTypes.TEXT,
+        allowNull: true
+      },
       password: {
         type: DataTypes.STRING,
         allowNull: true,

@@ -5,6 +5,12 @@ export default (sequelize, DataTypes) => {
   return sequelize.define(
     'claim',
     {
+      id: {
+        type: DataTypes.UUID,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+      },
       claim_status: {
         type: DataTypes.STRING,
         allowNull: true,

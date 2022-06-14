@@ -1,6 +1,7 @@
 import models from '../models';
 
 const User = models.User;
+const Delegation = models.Delegation;
 
 const User_controller = {
     
@@ -27,17 +28,37 @@ const User_controller = {
     User.bulkCreate(data).then(() => console.log('User created successfully'));
   },
 
-  deleteUser: (req, res, next) => {
-    const { emails } = req.body;
-    User.destroy({
-      where: {email: emails},
-    }).then(count => {
-       
-    })
-    .catch(err => {
-      res.status(500).send({ message: err.message });
-    });
+  deleteUser: async (req, res) => {
+    const userRole = req.userData.role;
+    const userId = req.query.userId;
+    const id = req.query.id;
+    console.log(userRole);
+    try {
+      if(userRole === 'admin') {
+          await User.destroy({
+                  where: {id: userId},
+                });
+      } else {
+          await Delegation.destroy({
+            where: {id: id}
+          })
+      }
+      return res.status(200).send({message: 'Delete Success!'});
+    } catch (error) {
+      res.status(500).send({ message: error.message });
+    }
   },
+
+  deleteLandlord: async (req, res, next) => {
+    const landlordId = req.query.id;
+    try {
+      await User.destroy({where: {landlord_id: landlordId}});
+      next();
+    } catch (error) {
+      res.status(500).send({ message: error.message });
+    }
+  },
+
 };
 
 export default User_controller;

@@ -7,6 +7,8 @@ import Request_controller from '../controllers/request_controller'
 
 const router = express.Router();
 
+// router.get('/', authJwt, Request_controller.getNotification);
+router.get('/activity', authJwt, Request_controller.setUserActivity);
 router.get('/to', authJwt, Request_controller.findRequestTo);
 router.get('/from', authJwt, Request_controller.findRequestFrom);
 router.get('/accept', authJwt, Request_controller.acceptRequest, Request_controller.findRequestFrom);

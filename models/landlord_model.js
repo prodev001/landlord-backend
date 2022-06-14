@@ -4,6 +4,12 @@ export default (sequelize, DataTypes) => {
   return sequelize.define(
     'landlord',
     {
+      id: {
+        type: DataTypes.UUID,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+      },
       landlord_id: {
         type: DataTypes.STRING,
         allowNull: false,

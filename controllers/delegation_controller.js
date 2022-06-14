@@ -7,12 +7,14 @@ import {sendEmail} from '../util/util';
 const Delegation = models.Delegation;
 const Request = models.Request;
 const Building = models.Building;
+const User = models.User;
 
 const Delegation_controller = {
 
   findPropertyMananger: async (req, res) => {
     const userRole = req.userData.role;
     const userEmail = req.userData.email;
+    const userId = req.userData.userId;
     const role = req.params.role;
     try {
       let delegates;
@@ -20,17 +22,41 @@ const Delegation_controller = {
         delegates = await Delegation.findAll({
           where: {
             accepter_role: role
-          }
+          },
+          include: [
+            {
+              model: User, 
+              as: 'accepter', 
+              attributes: ['image', 'username', 'phone', 'job_title', 'role']
+            },
+            {
+              model: User, 
+              as: 'requestor', 
+              attributes: ['image', 'username', 'phone', 'job_title', 'role']
+            }
+          ]
         });
       } else {
         delegates = await Delegation.findAll({
           where: {
-            requestor_email: userEmail,
-            requestor_role: userRole,
-            accepter_role: role
-          }
+            requestor_id: userId,
+            accepter_role: role,
+          },
+          include: [
+            {
+              model: User, 
+              as: 'accepter', 
+              attributes: ['image', 'username', 'phone', 'job_title']
+            },
+            {
+              model: User, 
+              as: 'requestor', 
+              attributes: ['image', 'username', 'phone', 'job_title']
+            }
+          ]
         });
       }
+      console.log(delegates);
       res.status(200).send({
         data: delegates
       });
@@ -98,6 +124,7 @@ const Delegation_controller = {
   findRequestUserProperty: async (req, res) => {
     const data = req.body;
     let buildings, delegates, requests;
+    console.log(data);
     try {
       const accepter_role = data.accepter_role;
       if(!accepter_role) {
@@ -132,11 +159,10 @@ const Delegation_controller = {
           let property = data.property;
           delegates = await Delegation.findAll({
               where: {
-                requestor_email: data.accepter_email,
+                requestor_id: data.accepter_id,
                 requestor_role: accepter_role
               }
             })
-
           if(delegates.length > 0) {
             delegates.forEach(delegate => {
                 property = property.filter(id => !delegate.property.includes(id));
@@ -144,7 +170,7 @@ const Delegation_controller = {
           }
           requests = await  Request.findAll({
             where: {
-                accepter_email: data.accepter_email,
+                requestor_id: data.accepter_id,
                 accepter_role: accepter_role
               }
             })
@@ -170,17 +196,33 @@ const Delegation_controller = {
 
   findVP: async (req, res) => {
     try {
-      const delegates = await Delegation.findAll({
-        where: {
-          accepter_role: 'vp',
-          // accpeted: true
-        }
-      })
+      const userId = req.userData.userId;
+      const requestorIds = await Delegation.findAll(
+        {
+          where: {
+            requestor_role: 'vp',
+            accepter_id: userId
+          },
+          attributes: ['requestor_id']
+        })
+      console.log(requestorIds);
+      const ids = [];
+      requestorIds.forEach(item => ids.push(item.requestor_id))
+      const vps = await Delegation.findAll(
+        {
+          where: { accepter_id: { [Op.in]: ids } },
+          include: {
+              model: User, 
+              as: 'accepter', 
+              attributes: ['image', 'username', 'phone', 'job_title', 'role']
+          }
+        },
+      )
       res.status(200).send({
-        data: delegates,
+        data: vps,
       });
     } catch (error) {
-      res.status(500).send({ message: err.message });
+      res.status(500).send({ message: error.message });
     }
   },
 
@@ -200,20 +242,14 @@ const Delegation_controller = {
     });
   },
 
-  deleteUser: (req, res, next) => {
-    const { ids } = req.body;
-    Delegation.destroy({
-      where: {id: ids},
-    }).then(count => {
-      if (!count) {
-        return res.status(404).send({error: 'No user'});
-       }
-       next();
-       return res.status(200).send({message: 'Delete Success!'});
-    })
-    .catch(err => {
-      res.status(500).send({ message: err.message });
-    });
+  deleteLandlord: async (req, res, next) => {
+    const landlordId = req.query.id;
+    try {
+      await Delegation.destroy({where: {landlord_id: landlordId}});
+      next();
+    } catch (error) {
+      res.status(500).send({ message: error.message });
+    }
   },
 
   findInvites: async (req, res) => {

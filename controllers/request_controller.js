@@ -3,10 +3,12 @@ import Sequelize from 'sequelize';
 var Op = Sequelize.Op;
 
 import {sendEmail} from '../util/util';
+import sendNotification from '../util/websocket';
 
 const Request = models.Request;
 const Delegation = models.Delegation;
 const Building = models.Building;
+const Notification = models.Notification;
 
 const Request_controller = {
 
@@ -56,6 +58,7 @@ const Request_controller = {
           requestor_email,
         }
         sendEmail(res, emailData, emailSubject, emailContent, invitedBuildings );
+        sendNotification(data);
     } catch (error) {
       console.log(error);
       res.status(500).send({ message: error.message });
@@ -231,22 +234,35 @@ const Request_controller = {
     }
   },
 
-  sendNotification: async (req, res) => {
-    const subscription = req.body
-
-    console.log(subscription)
-
-    const payload = JSON.stringify({
-      title: 'Hello!',
-      body: 'It works.',
-    })
-
-    webpush.sendNotification(subscription, payload)
-      .then(result => console.log(result))
-      .catch(e => console.log(e.stack))
-
-    res.status(200).json({'success': true})
+  setUserActivity: async (req, res) => {
+    try {
+      const userId = req.userData.userId;
+      const old_notification = await Notification.findOne({where: {user_id: userId}});
+      if (old_notification) {
+        await Notification.update({
+          active_time: Date.now()
+        },
+        {
+          where: {user_id: userId}
+        })
+      } else {
+        await Notification.create({user_id: userId, active_time: Date.now()})
+      }
+      const new_notification = await Notification.findOne({where: {user_id: userId}});
+      res.status(200).send(new_notification);
+    } catch (error) {
+      res.status(500).send({ message: error.message });
     }
+  },
+  
+  getNotification: async (req, res) => {
+    try {
+      const userId = req.userData.userId;
+      const notification = await Notification.findAll({where: {}})
+    } catch (error) {
+      
+    }
+  }
 };
 
 export default Request_controller;

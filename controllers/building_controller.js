@@ -10,7 +10,7 @@ const Building_controller = {
   findAllBuilding: async (req, res) => {
     try {
       const buildings = await Building.findAll({
-        limit: 2000
+        // limit: 1000
       })
       res.status(200).send({
         data: buildings
@@ -29,7 +29,7 @@ const Building_controller = {
     let buildings;
     try {
       if(userRole === 'admin') {
-        buildings = await Building.findAll({limit: 2000})
+        buildings = await Building.findAll({limit: 1000})
       } else if(userRole === 'll') {
         buildings = await Building.findAll({
           where: {

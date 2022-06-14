@@ -97,6 +97,22 @@ const Landlord_controller = {
         console.log(data);
         await sendLandlordInviteEmail(res, data);
       }
+  },
+
+  inactiveLandlord: async (req, res, next) => {
+    const landlordId = req.query.id;
+    try {
+      await Landlord.update({
+        active: false
+      },
+      {
+        where: {landlord_id: landlordId}
+      });
+      next();
+      // res.status(200).send({message: 'Inactivate Landlord success!'})
+    } catch (error) {
+      res.status(500).send({ message: error.message });
+    }
   }
 };
 

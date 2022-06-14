@@ -4,6 +4,12 @@ export default (sequelize, DataTypes) => {
   return sequelize.define(
     'building',
     {
+      id: {
+        type: DataTypes.UUID,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+      },
       building_id: {
         type: DataTypes.STRING,
         allowNull: false,

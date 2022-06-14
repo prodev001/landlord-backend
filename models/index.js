@@ -1,5 +1,5 @@
 import Sequelize from 'sequelize';
-import configObj from '../config/config.json';
+import configObj from '../config/config';
 // import fs from 'fs';
 import claimModel from "./claim_model";
 import buildingModel from "./building_model";
@@ -7,10 +7,8 @@ import landlordModel  from "./landlord_model";
 import appModel from "./application_model";
 import userModel from "./user_model";
 import delegationModel from "./delegation_model";
-import vicePresidentModel from './vicepresident_model';
-import regionalManangerModel from './regionalMananger_model';
-import propertyManagerModel from './propertyManager_model';
 import requestModel from './request_model';
+import notificationModel from './notification_model';
 
 const env = process.env.NODE_ENV || 'development';
 const config = configObj[env];
@@ -60,18 +58,21 @@ const Landlord = landlordModel(sequelize, Sequelize.DataTypes);
 const Application = appModel(sequelize, Sequelize.DataTypes);
 const Delegation = delegationModel(sequelize, Sequelize.DataTypes);
 const User = userModel(sequelize, Sequelize.DataTypes);
-const VicePresident = vicePresidentModel(sequelize, Sequelize.DataTypes);
-const RegionalManager = regionalManangerModel(sequelize, Sequelize.DataTypes);
-const PropertyMananger = propertyManagerModel(sequelize, Sequelize.DataTypes);
 const Request = requestModel(sequelize, Sequelize.DataTypes);
+const Notification = notificationModel(sequelize, Sequelize.DataTypes);
 
-User.hasMany(VicePresident, {
-  as: 'vp_mapping',
-  foreignKey: 'landlordId',
+User.hasMany(Delegation, {as: 'delegation'});
+
+Delegation.belongsTo(User, {
+  foreignKey: 'accepter_id',
+  onDelete: 'CASCADE',
+  as: 'accepter'
 });
 
-VicePresident.belongsTo(User, {
-    foreignKey: 'landlordId',
+Delegation.belongsTo(User, {
+  foreignKey: 'requestor_id',
+  onDelete: 'CASCADE',
+  as: 'requestor'
 });
 
 const models = {
@@ -81,10 +82,8 @@ const models = {
   Application, 
   Delegation, 
   User, 
-  VicePresident, 
-  RegionalManager, 
-  PropertyMananger,
-  Request
+  Request,
+  Notification
 }
 
 models.sequelize = sequelize;

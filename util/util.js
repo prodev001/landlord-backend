@@ -1,6 +1,8 @@
 import aws_sdk from 'aws-sdk';
 import jwt from "jsonwebtoken";
 import bcrypt from 'bcryptjs';
+import AWS from 'aws-sdk';
+
 import InviteEmailTemplate from './templates/inviteEmailTemplate';
 import inviteLandlordEmailTemplate from './templates/inviteLandlordEmailTemplate';
 import { expiresInHrs } from "../constants/jwt_constants";
@@ -14,6 +16,14 @@ const SESConfig = {
     secretAccessKey: process.env.AWS_SECRET_KEY,
     region: process.env.AWS_REGION
 }
+
+const S3Config = new AWS.S3({
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_SECRET_KEY,
+    region: process.env.AWS_REGION
+  });
+
+const s3FileURL = process.env.AWS_Uploaded_File_URL_LINK;
 
 export const sendEmail = (res, emailData, emailSubject, emailContent, invitedBuildings) => {
     const {
@@ -143,3 +153,59 @@ export const sendLandlordInviteEmail = async (res, data) => {
         });
     })
 }
+
+export const uploadImage = async (file) => {
+
+    return new Promise((resolve, reject) => {
+      try {
+            const params = {
+                Bucket: process.env.S3_BUCKET,
+                Key: Date.now().toString() + file.originalname,
+                Body: file.buffer,
+                ContentType: file.mimetype,
+                ACL: "public-read"
+            };
+                    
+            S3Config.upload(params, function(error, data) {
+                if (error) {
+                console.log(error);
+                    reject(error);
+                } else {
+                    const newFileUploaded = {
+                        fileLink: data.Location,
+                        s3_key: params.Key
+                    };
+                resolve(newFileUploaded);
+                }
+            });
+        } catch(error) {
+          reject(error);
+            // Logger.LOG.error('Error in uploading image: ' + error);
+            // res.status(400).json({ message: 'failed upload image' });
+        }
+    })
+  }
+  
+export const removeImage = async (fileName) => {
+    return new Promise((resolve, reject) => {
+      try {
+          const key = fileName.split('/').pop();
+          const params = {
+            Bucket: process.env.S3_BUCKET,
+            Key: key,
+          };      
+          S3Config.deleteObject(params, function(error, data) {
+            if (error) {
+                reject(error);
+            }
+            console.log(data, 'success');
+            resolve(data);
+          });
+        } catch(error) {
+            console.log(error, 'error');
+          reject(error);
+            // Logger.LOG.error('Error in uploading image: ' + error);
+            // res.status(400).json({ message: 'failed upload image' });
+        }
+    })
+  }

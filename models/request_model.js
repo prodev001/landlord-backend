@@ -4,8 +4,14 @@ export default (sequelize, DataTypes) => {
   return sequelize.define(
     'request',
     {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+      },
       requestor_id: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: true
       },
       request_type: {
@@ -13,7 +19,7 @@ export default (sequelize, DataTypes) => {
         allowNull: false
       },
       accepter_id: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: true,
       },
       requestor_email: {

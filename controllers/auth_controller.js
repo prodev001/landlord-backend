@@ -4,6 +4,7 @@ const { hashSync, compareSync } = bcrypt;
 
 import models from "../models";
 import { expiresInHrs } from "../constants/jwt_constants";
+import {uploadImage, removeImage} from '../util/util';
 
 const User = models.User;
 const Landlord = models.Landlord;
@@ -62,13 +63,13 @@ export async function  signup(req, res) {
   
 }
 
-export function signin(req, res) {
-  User.findOne({
-    where: {
-      email: req.body.email,
-    },
-  })
-  .then(user => {
+export async function signin(req, res) {
+  try {
+    const user = await User.findOne({
+      where: {
+        email: req.body.email,
+      },
+    })
     if (!user) {
       return res.status(404).send({ message: "User Not found." });
     }
@@ -84,12 +85,12 @@ export function signin(req, res) {
 
     let token;
     if(user.role !== 'admin' && user.role !== 'll' ) {
-      Delegation.findOne({
-        where: {
-          accepter_email: user.email,
-          accepter_role: user.role
-        }
-      }).then(delegation => {
+        const delegation = await Delegation.findOne({
+          where: {
+            accepter_email: user.email,
+            accepter_role: user.role
+          }
+        });
         token = jwt.sign(
           {
             userId: user.id,
@@ -102,47 +103,34 @@ export function signin(req, res) {
           process.env.JWT_KEY,
           {expiresIn: expiresInHrs}
         );
-        
-        res.status(200).send({
-          message: 'LogIn Success!',
-          data: {
-            landlord_id: user.landlord_id,
-            username: user.username,
-            email: user.email,
-            role: user.role,
-            accessToken: token
-          }
-        });
-        
-      })
     } else {
-      token = jwt.sign(
-        {
-          userId: user.id,
-          landlordId: user.landlord_id,
-          email: user.email,
-          username: user.username,
-          role: user.role,
-        },
-        process.env.JWT_KEY,
-        {expiresIn: expiresInHrs}
-      );
-
-      res.status(200).send({
-        message: 'LogIn Success!',
-        data: {
-          landlord_id: user.landlord_id,
-          username: user.username,
-          email: user.email,
-          role: user.role,
-          accessToken: token
-        }
-      });
+        token = jwt.sign(
+          {
+            userId: user.id,
+            landlordId: user.landlord_id,
+            email: user.email,
+            username: user.username,
+            role: user.role,
+          },
+          process.env.JWT_KEY,
+          {expiresIn: expiresInHrs}
+        );
     }
-  })
-  .catch(err => {
-    res.status(500).send({ message: err.message });
-  });
+    res.status(200).send({
+      message: 'LogIn Success!',
+      data: {
+        landlord_id: user.landlord_id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        image: user.image,
+        accessToken: token
+      }
+    });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+  
 }
 
 export function emailVerify(req, res) {
@@ -229,6 +217,72 @@ export function setDeclineReason(req, res) {
         message: 'Decline Success!'
       });
     });
+  } catch (error) {
+    res.status(500).send({message: error.message})
+  }
+}
+
+export const editProfile = async (req, res) => {
+  try {
+    const {userId} = req.userData;
+    const file = req.file;
+    const username = req.body.name;
+    const email = req.body.email;
+    const phone = req.body.phone;
+    const job_title = req.body.job_title;
+    const old_pwd = req.body.old_pwd;
+    const new_pwd = req.body.new_pwd
+    const edit_img = req.body.edit_img;
+    const edit_pwd = req.body.edit_pwd;
+    if (edit_img ==='true' && file) {
+      const user = await User.findOne({where: {id: userId}});
+      if(user.image) {
+        removeImage(user.image);
+      }
+      let uploadFile = await uploadImage(file);
+      await User.update(
+        { image: uploadFile.fileLink }, 
+        { where: {id: userId}}
+      )
+    }
+    if (edit_pwd === 'true') {
+      const user = await User.findOne({where: {id: userId}});
+      var passwordIsValid = compareSync(
+        old_pwd,
+        user.password
+      );
+      if (passwordIsValid) {
+        await User.update(
+          { password: hashSync(new_pwd, 8)},
+          {
+            where: {id: userId}
+          }
+        )
+      } else {
+        return res.status(500).send({message: 'Password update failed'})
+      }
+    }
+    await User.update(
+      { 
+        email: email,
+        username: username,
+        phone: phone,
+        job_title: job_title
+      },
+      {
+        where: {id: userId}
+      })
+    const user = await User.findOne({where: {id: userId}});
+    res.status(200).send({
+      message: 'Edit Profile Success', 
+      data: {
+          landlord_id: user.landlord_id,
+          username: user.username,
+          email: user.email,
+          role: user.role,
+          image: user.image,
+          job_title: user.job_title
+    }});
   } catch (error) {
     res.status(500).send({message: error.message})
   }

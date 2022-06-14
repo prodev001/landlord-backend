@@ -9,10 +9,7 @@ import queue_listener from './listener/queue_listener';
 import jobs from './jobs';
 import models from './models/index.js';
 import routes from './routes';
-
-import webpush from 'web-push';
-
-webpush.setVapidDetails(process.env.WEB_PUSH_CONTACT, process.env.PUBLIC_VAPID_KEY, process.env.PRIVATE_VAPID_KEY);
+import './util/websocket';
 
 const port = process.env.PORT || 8000;
 const app = express();
@@ -62,11 +59,13 @@ app.get("/", (req, res) => {
   });
 // });
 
-// const initial = () => {
-//   models.User.create({
-//     username: 'LeapEasy',
-//     email: 'admin@leapeasy.com',
-//     password: hashSync('admin', 8),
-//     role: 'admin'
-//   })
-// }
+
+
+const initial = () => {
+  models.User.create({
+    username: 'LeapEasy',
+    email: 'admin@leapeasy.com',
+    password: hashSync('admin', 8),
+    role: 'admin'
+  })
+}

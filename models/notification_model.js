@@ -1,8 +1,8 @@
-import common_constants from '../constants/common_constants';
+import { default as common_constants } from '../constants/common_constants';
 
 export default (sequelize, DataTypes) => {
   return sequelize.define(
-    'vicepresident',
+    'notification',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -10,21 +10,17 @@ export default (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      landlordId: {
+      user_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'users',
-          key: 'id',
-        },
+        allowNull: false
       },
-      property_ids: {
-        type: DataTypes.ARRAY(DataTypes.STRING),
-        allowNull: false,
-      },
+      active_time: {
+          type: DataTypes.DATE,
+          allowNull: false
+      }
     },
     {
-      tableName: 'vicepresident',
+      tableName: 'notification',
       schema: common_constants.SCHEMA_MAPPING[process.env.NODE_ENV],
     }
   );
