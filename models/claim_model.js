@@ -1,12 +1,11 @@
-import enum_constants from '../constants/enum_constants';
-import common_constants from '../constants/common_constants';
+import {SCHEMA_MAPPING} from '../constants/enum_constants';
 
 export default (sequelize, DataTypes) => {
   return sequelize.define(
     'claim',
     {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
@@ -122,7 +121,7 @@ export default (sequelize, DataTypes) => {
     },
     {
       tableName: 'claim',
-      schema: common_constants.SCHEMA_MAPPING[process.env.NODE_ENV],
+      schema: SCHEMA_MAPPING[process.env.NODE_ENV],
     }
   );
 };

@@ -14,9 +14,9 @@ const jobs = async () => {
     const task1 = cron.schedule('*/1 * * * * * ', async() =>
       { 
           await landlord.onboard();
-          await building.onboard();
-          await application.onboard();
-          await claim.onboard();
+          // await building.onboard();
+          // await application.onboard();
+          // await claim.onboard();
           // await sendMessage();
         },
         {

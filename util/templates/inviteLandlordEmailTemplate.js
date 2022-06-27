@@ -1,5 +1,4 @@
 
-import common_constants from '../../constants/common_constants';
 
 export default function (data, link, emailContent, invitedBuildings) {
         return (
@@ -103,6 +102,7 @@ export default function (data, link, emailContent, invitedBuildings) {
                             <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 35px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
                               <p style="margin: 0;">Hi</p>
                               <p style="margin: 0;">${emailContent}</p>
+                              <p style="margin: 0;">LeapEasy invited you to join the Leap Easy Landlord Portal as a "Landlord" position</p>
                             </td>
                           </tr>
           

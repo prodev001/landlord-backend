@@ -2,6 +2,7 @@ import models from '../models';
 
 const User = models.User;
 const Delegation = models.Delegation;
+const Request = models.Request;
 
 const User_controller = {
     
@@ -32,19 +33,31 @@ const User_controller = {
     const userRole = req.userData.role;
     const userId = req.query.userId;
     const id = req.query.id;
-    console.log(userRole);
     try {
       if(userRole === 'admin') {
           await User.destroy({
                   where: {id: userId},
                 });
+          await Request.destroy({
+              where: {
+                requestor_id: id,
+                accepter_id: userId
+              }
+          })
       } else {
           await Delegation.destroy({
             where: {id: id}
           })
+          await Request.destroy({
+            where: {
+              requestor_id: id,
+              accepter_id: userId
+            }
+        })
       }
       return res.status(200).send({message: 'Delete Success!'});
     } catch (error) {
+      console.log(error);
       res.status(500).send({ message: error.message });
     }
   },
@@ -52,7 +65,7 @@ const User_controller = {
   deleteLandlord: async (req, res, next) => {
     const landlordId = req.query.id;
     try {
-      await User.destroy({where: {landlord_id: landlordId}});
+      await User.destroy({where: {sf_landlord_id: landlordId}});
       next();
     } catch (error) {
       res.status(500).send({ message: error.message });

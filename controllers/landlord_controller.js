@@ -2,6 +2,7 @@ import models from '../models';
 import {sendLandlordInviteEmail} from '../util/util';
 
 const Landlord = models.Landlord;
+const User = models.User;
 
 const Landlord_controller = {
 
@@ -18,9 +19,18 @@ const Landlord_controller = {
 
   findActiveLandlord: async (req, res) => {
     try {
-      const landlords = await Landlord.findAll({where: {active: true}});
+      const landlords = await Landlord.findAll({
+          where: {active: true},
+          include: [
+                {
+                  model: User, 
+                  attributes: ['image', 'username', 'phone', 'job_title']
+                },
+              ]
+          });
       res.status(200).send({
-        data: landlords
+        data: landlords,
+        message: 'Delete Landlord Successful!'
       });
     } catch (error) {
       res.status(500).send({ message: error.message });
@@ -32,7 +42,7 @@ const Landlord_controller = {
     record.forEach(obj => {
       const primary_contact = obj.Primary_Contact__r ? obj.Primary_Contact__r.Name : null;
       data.push({
-          landlord_id: obj.Id,
+          sf_landlord_id: obj.Id,
           name: obj.Name,
           phone: obj.Phone,
           primary_contact: primary_contact,
@@ -84,9 +94,8 @@ const Landlord_controller = {
   },
 
   sendInviteEmail: async (req, res) => {
-    const payload = req.body;
-    const {toEmail, emailContent, emailSubject, landlordID} = payload;
-    console.log(toEmail, emailContent, emailSubject,landlordID);
+    const {toEmail, emailContent, emailSubject, landlordID} = req.body;
+
       for (let index = 0; index < toEmail.length; index++) {
         const data = {
           toEmail: toEmail[index],
@@ -101,12 +110,13 @@ const Landlord_controller = {
 
   inactiveLandlord: async (req, res, next) => {
     const landlordId = req.query.id;
+    console.log(landlordId);
     try {
       await Landlord.update({
         active: false
       },
       {
-        where: {landlord_id: landlordId}
+        where: {sf_landlord_id: landlordId}
       });
       next();
       // res.status(200).send({message: 'Inactivate Landlord success!'})

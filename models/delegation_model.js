@@ -1,5 +1,5 @@
 import Sequelize from 'sequelize';
-import { default as common_constants } from '../constants/common_constants';
+import {SCHEMA_MAPPING} from '../constants/enum_constants';
 import userModel from "./user_model";
 
 export default (sequelize, DataTypes) => {
@@ -47,7 +47,7 @@ export default (sequelize, DataTypes) => {
     },
     {
       tableName: 'delegation',
-      schema: common_constants.SCHEMA_MAPPING[process.env.NODE_ENV],
+      schema: SCHEMA_MAPPING[process.env.NODE_ENV],
     }
   );
 };

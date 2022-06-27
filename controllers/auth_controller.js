@@ -5,6 +5,7 @@ const { hashSync, compareSync } = bcrypt;
 import models from "../models";
 import { expiresInHrs } from "../constants/jwt_constants";
 import {uploadImage, removeImage} from '../util/util';
+import { REQUEST_STATUS } from "../constants/enum_constants";
 
 const User = models.User;
 const Landlord = models.Landlord;
@@ -20,18 +21,9 @@ export async function  signup(req, res) {
   const email = req.body.email
   const password = hashSync(req.body.password, 8);
   const role = req.body.role;
-  const landlord_id = req.body.landlordId
+  const landlordId = req.body.landlordId;
+
   try {
-    const user = await User.create({
-                        username,
-                        email,
-                        password,
-                        role,
-                        landlord_id,
-                        active: true
-                      });
-                      console.log(user);
-    
     if (role !== 'll') {
         const request = await Request.findOne({
                   where: {
@@ -39,8 +31,18 @@ export async function  signup(req, res) {
                     accepter_role: role,
                   }
               })
-        request.set({accepted: true})
+        request.set({request_status: REQUEST_STATUS['ACCEPT']})
         request.save();
+
+        const user = await User.create({
+          username,
+          email,
+          password,
+          role,
+          sf_landlord_id: landlordId,
+          active: true
+        });
+
         await Delegation.create({
             accepter_email: request.accepter_email,
             accepter_role: request.accepter_role,
@@ -51,13 +53,35 @@ export async function  signup(req, res) {
             requestor_id: request.requestor_id,
             landlord_id: request.landlord_id
           });
+
     } else {
-      const landlord = await Landlord.findOne({ where: {landlord_id: landlord_id}});
-      landlord.set({active: true});
+      const landlord = await Landlord.findOne({ where: {sf_landlord_id: landlordId}});
+
+      const request = await Request.findOne({
+        where: {
+          accepter_email: email,
+          accepter_role: role,
+        }
+      })
+      request.set({request_status: REQUEST_STATUS['ACCEPT']})
+      request.save();
+
+      const user = await User.create({
+        username,
+        email,
+        password,
+        role,
+        sf_landlord_id: landlordId,
+        active: true
+      });
+
+      landlord.set({active: true, user_id: user.id});
       landlord.save();
+
     }
     res.status(200).send({ message: "Account creation successful!" });
   } catch (error) {
+    console.log(error);
     res.status(500).send({ message: error.message });
   }
   
@@ -94,11 +118,11 @@ export async function signin(req, res) {
         token = jwt.sign(
           {
             userId: user.id,
-            landlordId: user.landlord_id,
             email: user.email,
             username: user.username,
             role: user.role,
-            property: delegation.property
+            property: delegation.property,
+            landlordId: user.sf_landlord_id,
           },
           process.env.JWT_KEY,
           {expiresIn: expiresInHrs}
@@ -107,7 +131,7 @@ export async function signin(req, res) {
         token = jwt.sign(
           {
             userId: user.id,
-            landlordId: user.landlord_id,
+            landlordId: user.sf_landlord_id,
             email: user.email,
             username: user.username,
             role: user.role,
@@ -117,14 +141,15 @@ export async function signin(req, res) {
         );
     }
     res.status(200).send({
-      message: 'LogIn Success!',
+      message: 'Login Success!',
       data: {
-        landlord_id: user.landlord_id,
         username: user.username,
         email: user.email,
         role: user.role,
         image: user.image,
-        accessToken: token
+        accessToken: token,
+        phone: user.phone,
+        job_title: user.job_title
       }
     });
   } catch (error) {
@@ -276,12 +301,12 @@ export const editProfile = async (req, res) => {
     res.status(200).send({
       message: 'Edit Profile Success', 
       data: {
-          landlord_id: user.landlord_id,
           username: user.username,
           email: user.email,
           role: user.role,
           image: user.image,
-          job_title: user.job_title
+          job_title: user.job_title,
+          phone: user.phone
     }});
   } catch (error) {
     res.status(500).send({message: error.message})

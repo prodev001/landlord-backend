@@ -13,6 +13,7 @@ const Application_controller = {
     const userRole = req.userData.role;
     const userEmail = req.userData.email;
     const userId = req.userData.userId;
+
     let apps;
     try {
       if(buildingId !== 'undefined') {

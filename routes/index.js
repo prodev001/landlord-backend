@@ -4,6 +4,7 @@ import user from "./user";
 import delegation from './delegation';
 import email from './email';
 import notification from './notification';
+import invite from './invite';
 
 export default (app) => {
     app.use('/auth', auth);
@@ -12,6 +13,7 @@ export default (app) => {
     app.use('/delegation', delegation);
     app.use('/email', email);
     app.use('/notification', notification);
+    app.use('/invite', invite);
     return app;
 }
 

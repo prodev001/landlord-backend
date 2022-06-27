@@ -7,8 +7,6 @@ import Request_controller from '../controllers/request_controller'
 
 const router = express.Router();
 
-router.post('/invite-user', authJwt, Request_controller.InviteCreate);
-router.get('/invite-property', authJwt, Delegation_controller.findInviteBuilding);
 router.get('/request-landlord', authJwt, Landlord_controller.findActiveLandlord);
 router.get('/request-vp', authJwt, Delegation_controller.findVP);
 router.get('/request-building', authJwt, Building_controller.findAllBuilding);

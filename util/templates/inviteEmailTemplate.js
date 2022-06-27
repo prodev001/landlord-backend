@@ -1,9 +1,9 @@
 
-import common_constants from '../../constants/common_constants';
+import {USER_ROLE} from '../../constants/enum_constants';
 
 export default function (data, link, emailContent, invitedBuildings) {
     let string= '';
-    invitedBuildings.forEach(item => string += '<tr><td style="padding: 4px; text-align: center">'+ item.name + '</td>' + '<td style="padding: 4px; text-align: center">'+ item.building_type + '</td>' + '<td style="padding: 4px; text-align: center">'+ item.billingStreet + '</td>' + '<td style="padding: 4px; text-align: center">'+ item.total_of_units + '</td>' + '<td style="padding: 4px; text-align: center">' + item.student_housing + '</td></tr>');
+    invitedBuildings.forEach(item => string += '<tr><td style="padding: 4px; text-align: center">'+ item.name + '</td>' + '<td style="padding: 4px; text-align: center">'+ item.email_address + '</td>' + '<td style="padding: 4px; text-align: center">'+ item.total_of_units + '</td>' + '<td style="padding: 4px; text-align: center">' + item.billingState + '</td>' + '<td style="padding: 4px; text-align: center">' + item.billingCity + '</td></tr>');
         return (
             `<html>
             <head>
@@ -105,7 +105,7 @@ export default function (data, link, emailContent, invitedBuildings) {
                             <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 35px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
                               <p style="margin: 0;">Hi</p>
                               <p style="margin: 0;">${emailContent}</p>
-                              <p style="margin: 0;">${data.requestor_email} invited you to join the Leap Easy Landlord Portal as a "${common_constants.USER_ROLE[data.accepter_role]}" position for the below properties </p>
+                              <p style="margin: 0;">${data.requestor_email} invited you to join the Leap Easy Landlord Portal as a "${USER_ROLE[data.accepter_role]}" position for the below properties </p>
                             </td>
                           </tr>
                           <tr>
@@ -113,10 +113,10 @@ export default function (data, link, emailContent, invitedBuildings) {
                               <table style="font-size: 14px; width: 100%">
                                 <tr style="background: #450547bd">
                                   <th style="padding: 4px">Building Name</th>
-                                  <th style="padding: 4px">Building Type</th>
-                                  <th style="padding: 4px">Address</th>
+                                  <th style="padding: 4px">Email</th>
                                   <th style="padding: 4px">Total Units</th>
-                                  <th style="padding: 4px">Students</th>
+                                  <th style="padding: 4px">Billing State</th>
+                                  <th style="padding: 4px">Billing City</th>
                                 </tr>
                                 ${string}
                               </table>

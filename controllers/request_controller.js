@@ -1,9 +1,9 @@
-import models from '../models';
 import Sequelize from 'sequelize';
 var Op = Sequelize.Op;
 
-import {sendEmail} from '../util/util';
-import sendNotification from '../util/websocket';
+import models from '../models';
+import {REQUEST_STATUS} from '../constants/enum_constants';
+
 
 const Request = models.Request;
 const Delegation = models.Delegation;
@@ -11,60 +11,6 @@ const Building = models.Building;
 const Notification = models.Notification;
 
 const Request_controller = {
-
-  InviteCreate: async (req, res) => {
-    const userData = req.userData;
-    const payload = req.body;
-    const requestor_id = userData.userId;
-    const accepter_id = payload.accepterId || null;
-    const requestor_email = userData.email;
-    const accepter_email = payload.toEmail;
-    const requestor_role = userData.role;
-    const accepter_role = payload.userRole;
-    const property = payload.property;
-    const landlord_id = userData.landlordId;
-    const emailSubject = payload.emailSubject;
-    const emailContent = payload.emailContent;
-    const request_type = 'invite';
-    try {
-        const data = {
-            request_type,
-            requestor_id,
-            accepter_id,
-            requestor_email,
-            accepter_email,
-            requestor_role,
-            accepter_role,
-            property,
-            landlord_id,
-            email_text: emailContent,
-        };
-        const request = await Request.findOne({where: {requestor_email, accepter_email,}})
-        if(request) {
-          return res.status(500).send({
-            message: 'User already Invited'
-          })
-        }
-        const invitedBuildings = await Building.findAll({
-          where: { 
-            building_id: {[Op.in]: property } 
-          }
-        })
-        const delegatioin = await Request.create(data);
-        const emailData = {
-          id: delegatioin.id,
-          accepter_email,
-          accepter_role,
-          requestor_email,
-        }
-        sendEmail(res, emailData, emailSubject, emailContent, invitedBuildings );
-        sendNotification(data);
-    } catch (error) {
-      console.log(error);
-      res.status(500).send({ message: error.message });
-    }
-
-  },
 
   RequestCreate: async (req, res) => {
     const userData = req.userData;
@@ -77,9 +23,11 @@ const Request_controller = {
     const accepter_role = accepter.role;
     const landlord_id = accepter.landlordId;
     const request_type = 'request';
+    const request_status = REQUEST_STATUS['PENDING'];
     try {
         const data = {
             request_type,
+            request_status,
             requestor_id,
             accepter_id,
             requestor_email,
@@ -171,8 +119,9 @@ const Request_controller = {
       const request = await Request.findOne(
         {where: { id: id}},
       )
-      request.set({accepted: true});
+      request.set({request_status: REQUEST_STATUS['ACCEPT']});
       request.save();
+      console.log(request);
       const delegation = await Delegation.findOne({
         where: {
           requestor_email: request.accepter_email,
@@ -209,7 +158,7 @@ const Request_controller = {
     try {
       await Request.update(
         {
-          declined: true,
+          request_status: REQUEST_STATUS['DECLINE'],
           decline_reason: text
         },
         {where: {id: id}}

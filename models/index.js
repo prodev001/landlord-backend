@@ -54,12 +54,12 @@ if (env === 'development') {
 
 const Claim = claimModel(sequelize, Sequelize.DataTypes);
 const Building = buildingModel(sequelize, Sequelize.DataTypes);
-const Landlord = landlordModel(sequelize, Sequelize.DataTypes);
 const Application = appModel(sequelize, Sequelize.DataTypes);
+const Landlord = landlordModel(sequelize, Sequelize.DataTypes);
 const Delegation = delegationModel(sequelize, Sequelize.DataTypes);
 const User = userModel(sequelize, Sequelize.DataTypes);
-const Request = requestModel(sequelize, Sequelize.DataTypes);
 const Notification = notificationModel(sequelize, Sequelize.DataTypes);
+const Request = requestModel(sequelize, Sequelize.DataTypes);
 
 User.hasMany(Delegation, {as: 'delegation'});
 
@@ -75,11 +75,17 @@ Delegation.belongsTo(User, {
   as: 'requestor'
 });
 
+Landlord.belongsTo(User, {
+  foreignKey: 'user_id'
+});
+
+User.hasOne(Landlord);
+
 const models = {
   Claim, 
   Building, 
-  Landlord, 
   Application, 
+  Landlord, 
   Delegation, 
   User, 
   Request,

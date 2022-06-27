@@ -1,4 +1,4 @@
-import { default as common_constants } from '../constants/common_constants';
+import {SCHEMA_MAPPING} from '../constants/enum_constants';
 
 export default (sequelize, DataTypes) => {
   return sequelize.define(
@@ -38,7 +38,7 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true
       },
-      landlord_id: {
+      sf_landlord_id: {
         type: DataTypes.STRING,
         allowNull: true,
       },
@@ -57,7 +57,7 @@ export default (sequelize, DataTypes) => {
     },
     {
       tableName: 'users',
-      schema: common_constants.SCHEMA_MAPPING[process.env.NODE_ENV],
+      schema: SCHEMA_MAPPING[process.env.NODE_ENV],
     }
   );
 };

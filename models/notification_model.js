@@ -1,4 +1,4 @@
-import { default as common_constants } from '../constants/common_constants';
+import {SCHEMA_MAPPING} from '../constants/enum_constants';
 
 export default (sequelize, DataTypes) => {
   return sequelize.define(
@@ -21,7 +21,7 @@ export default (sequelize, DataTypes) => {
     },
     {
       tableName: 'notification',
-      schema: common_constants.SCHEMA_MAPPING[process.env.NODE_ENV],
+      schema: SCHEMA_MAPPING[process.env.NODE_ENV],
     }
   );
 };

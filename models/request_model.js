@@ -1,4 +1,4 @@
-import { default as common_constants } from '../constants/common_constants';
+import {SCHEMA_MAPPING} from '../constants/enum_constants';
 
 export default (sequelize, DataTypes) => {
   return sequelize.define(
@@ -17,6 +17,10 @@ export default (sequelize, DataTypes) => {
       request_type: {
         type: DataTypes.STRING,
         allowNull: false
+      },
+      request_status: {
+        type: DataTypes.STRING,
+        defaultValue: false,
       },
       accepter_id: {
         type: DataTypes.INTEGER,
@@ -38,17 +42,9 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false
       },
-      accepted: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-      },
-      declined: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
-      },
       property: {
           type: DataTypes.ARRAY(DataTypes.STRING),
-          allowNull: false,
+          allowNull: true,
       },
       landlord_id: {
         type: DataTypes.STRING,
@@ -65,7 +61,7 @@ export default (sequelize, DataTypes) => {
     },
     {
       tableName: 'request',
-      schema: common_constants.SCHEMA_MAPPING[process.env.NODE_ENV],
+      schema: SCHEMA_MAPPING[process.env.NODE_ENV],
     }
   );
 };

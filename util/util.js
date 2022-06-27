@@ -25,7 +25,7 @@ const S3Config = new AWS.S3({
 
 const s3FileURL = process.env.AWS_Uploaded_File_URL_LINK;
 
-export const sendEmail = (res, emailData, emailSubject, emailContent, invitedBuildings) => {
+export const sendEmail = async (emailData, emailSubject, emailContent, invitedBuildings) => {
     const {
         id, 
         accepter_email,
@@ -79,16 +79,7 @@ export const sendEmail = (res, emailData, emailSubject, emailContent, invitedBui
           ],
       };
 
-    new SES(SESConfig).sendEmail(params).promise().then(response => {
-        res.status(200).send({
-            message: 'Delegation email has been sent to'
-        });
-    }).catch(err => {
-        console.log(err);
-        return res.status(401).send({
-            message: "Failed to send Delegatio email."
-        });
-    })
+    await new SES(SESConfig).sendEmail(params).promise();
 }
 
 export const sendLandlordInviteEmail = async (res, data) => {
@@ -142,16 +133,7 @@ export const sendLandlordInviteEmail = async (res, data) => {
           ],
       };
 
-    new SES(SESConfig).sendEmail(params).promise().then(response => {
-        res.status(200).send({
-            message: 'Delegation email has been sent to'
-        });
-    }).catch(err => {
-        console.log(err);
-        return res.status(401).send({
-            message: "Failed to send Delegatio email."
-        });
-    })
+    await new SES(SESConfig).sendEmail(params).promise();
 }
 
 export const uploadImage = async (file) => {
@@ -165,7 +147,7 @@ export const uploadImage = async (file) => {
                 ContentType: file.mimetype,
                 ACL: "public-read"
             };
-                    
+            console.log(S3Config, 'config');
             S3Config.upload(params, function(error, data) {
                 if (error) {
                 console.log(error);

@@ -26,6 +26,7 @@ const Building_controller = {
     const userEmail = req.userData.email;
     const userId = req.userData.userId;
     const property = req.userData.property;
+    console.log(landlordId);
     let buildings;
     try {
       if(userRole === 'admin') {

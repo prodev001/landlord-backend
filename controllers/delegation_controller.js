@@ -2,8 +2,6 @@ import models from '../models';
 import Sequelize from 'sequelize';
 var Op = Sequelize.Op;
 
-import {sendEmail} from '../util/util';
-
 const Delegation = models.Delegation;
 const Request = models.Request;
 const Building = models.Building;
@@ -27,12 +25,12 @@ const Delegation_controller = {
             {
               model: User, 
               as: 'accepter', 
-              attributes: ['image', 'username', 'phone', 'job_title', 'role']
+              attributes: ['image', 'username', 'phone', 'job_title', 'role', 'email']
             },
             {
               model: User, 
               as: 'requestor', 
-              attributes: ['image', 'username', 'phone', 'job_title', 'role']
+              attributes: ['image', 'username', 'phone', 'job_title', 'role', 'email']
             }
           ]
         });
@@ -64,61 +62,6 @@ const Delegation_controller = {
       res.status(500).send({ message: error.message });
     }
    
-  },
-  
-  findInviteBuilding: async (req, res) => {
-    const landlordId = req.userData.landlordId;
-    const userRole = req.userData.role;
-    const userEmail = req.userData.email;
-    const userId = req.userData.userId;
-    const property = req.userData.property;
-    let buildings, delegates;
-    try {
-      if(userRole === 'll') {
-        buildings = await Building.findAll({
-          where: {
-            landlord_id: landlordId,
-          },
-          // offset: 100, limit: 10
-        })
-        delegates = await  Delegation.findAll({
-            where: {
-              requestor_email: userEmail,
-              requestor_role: userRole
-            }
-          })
-        if(delegates.length > 0) {
-            delegates.forEach(delegate => {
-              buildings = buildings.filter(building => !delegate.property.includes(building.building_id));
-            })
-        }
-      } else if (userRole === 'vp' || userRole === 'rm' || userRole === 'pm') {
-        delegates = await Delegation.findAll({
-            where: {
-              requestor_email: userEmail,
-              requestor_role: userRole
-            }
-          })
-          let buildingIds = property;
-          if(delegates.length > 0) {
-            delegates.forEach(delegate => {
-              buildingIds = buildingIds.filter(id => !delegate.property.includes(id));
-            })
-          }
-          buildings = await Building.findAll({
-              where: {
-                building_id: { [Op.in]: buildingIds } 
-              }
-            })
-      } else {
-        buildings = await Building.findAll({limit: 2000});
-      }
-      res.status(200).send({
-        data: buildings
-      });
-    } catch (error) {
-      res.status(500).send({ message: error.message });
-    }
   },
 
   findRequestUserProperty: async (req, res) => {

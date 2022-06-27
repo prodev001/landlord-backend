@@ -39,7 +39,7 @@ const Claim_controller = {
         data: claims
       });
     } catch (error) {
-      res.status(500).send({ message: err.message });
+      res.status(500).send({ message: error.message });
     }
 
   },
