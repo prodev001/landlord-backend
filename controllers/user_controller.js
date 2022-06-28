@@ -45,9 +45,12 @@ const User_controller = {
               }
           })
       } else {
-          await Delegation.destroy({
-            where: {id: id}
-          })
+          await User.destroy({
+            where: {id: userId},
+          });
+          // await Delegation.destroy({
+          //   where: {id: id}
+          // })
           await Request.destroy({
             where: {
               requestor_id: id,

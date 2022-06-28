@@ -15,7 +15,7 @@ router.get('/buildings', authJwt, Building_controller.getUserBuilding);
 router.get('/applications', authJwt, Application_controller.findUserApplication);
 router.get('/claims', authJwt, Claim_controller.findUserClaim);
 router.post('/get/buildings', authJwt, Building_controller.getUserBuilding);
-router.put('/property', authJwt, Delegation_controller.updateProperty);
+// router.put('/property', authJwt, Delegation_controller.updateProperty);
 router.get('/propertymanager/:role', authJwt, Delegation_controller.findPropertyMananger);
 router.delete('/landlord', authJwt, Delegation_controller.deleteLandlord, User_controller.deleteLandlord, Landlord_controller.inactiveLandlord, Landlord_controller.findActiveLandlord );
 router.delete('/', authJwt, User_controller.deleteUser );

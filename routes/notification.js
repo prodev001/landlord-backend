@@ -14,5 +14,6 @@ router.get('/from', authJwt, Request_controller.findRequestFrom);
 router.get('/accept', authJwt, Request_controller.acceptRequest, Request_controller.findRequestFrom);
 router.post('/decline', authJwt, Request_controller.declineRequest, Request_controller.findRequestFrom);
 router.delete('/', authJwt, Request_controller.destroyById, Request_controller.findRequestFrom);
+router.put('/update-property', authJwt, Request_controller.updateProperty)
 
 export default router;

@@ -28,3 +28,9 @@ export const SCHEMA_MAPPING = {
     development: 'public',
     production: 'public',
   }
+export const REQUEST_TYPE = {
+  ADD: 'add',
+  REMOVE: 'remvoe',
+  INVITE: 'invite',
+  REQUEST: 'request',
+}

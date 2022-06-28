@@ -84,10 +84,11 @@ const InviteController = {
             landlord_id,
             email_text: emailContent,
         };
-        const request = await Request.findOne({where: {requestor_email, accepter_email,}})
-        if(request) {
+        const request = await Request.findOne({where: {accepter_email,}})
+        const delegation = await Delegation.findOne({where: {accepter_email,}})
+        if(request && delegation) {
           return res.status(500).send({
-            message: 'User already Invited'
+            message: 'User already Invited!!!'
           })
         }
         const invitedBuildings = await Building.findAll({
@@ -95,9 +96,9 @@ const InviteController = {
             building_id: {[Op.in]: property }
           }
         })
-        const delegatioin = await Request.create(data);
+        const newRequest = await Request.create(data);
         const emailData = {
-          id: delegatioin.id,
+          id: newRequest.id,
           accepter_email,
           accepter_role,
           requestor_email,

@@ -2,7 +2,7 @@ import Sequelize from 'sequelize';
 var Op = Sequelize.Op;
 
 import models from '../models';
-import {REQUEST_STATUS} from '../constants/enum_constants';
+import {REQUEST_STATUS, REQUEST_TYPE} from '../constants/enum_constants';
 
 
 const Request = models.Request;
@@ -114,18 +114,16 @@ const Request_controller = {
 
   acceptRequest: async (req, res, next) => {
     const id = req.query.id;
-    console.log(id);
     try {
       const request = await Request.findOne(
         {where: { id: id}},
       )
       request.set({request_status: REQUEST_STATUS['ACCEPT']});
       request.save();
-      console.log(request);
       const delegation = await Delegation.findOne({
         where: {
-          requestor_email: request.accepter_email,
-          accepter_email: request.requestor_email,
+          requestor_id: request.requestor_id,
+          accepter_id: request.accepter_id,
         }
       })
       if(delegation) {
@@ -210,6 +208,27 @@ const Request_controller = {
       const notification = await Notification.findAll({where: {}})
     } catch (error) {
       
+    }
+  },
+
+  updateProperty: async (req, res) => {
+    const {property, delegation } = req.body;
+    try {
+      Request.create({
+        requestor_id: delegation.requestor_id,
+        accepter_id: delegation.accepter_id,
+        requestor_email: delegation.requestor_email,
+        accepter_email: delegation.accepter_email,
+        requestor_role: delegation.requestor_role,
+        accepter_role: delegation.accepter_role,
+        landlord_id: delegation.landlord_id,
+        request_type: REQUEST_TYPE['ADD'],
+        request_status: REQUEST_STATUS['PENDING'],
+        property: property,
+      })
+      res.status(200).send('Create Request Successful!!!')
+    } catch (error) {
+      res.status(500).send(error);
     }
   }
 };
